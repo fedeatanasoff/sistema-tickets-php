@@ -15,16 +15,6 @@ CREATE TABLE actividades(
   cupo INTEGER NOT NULL
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE actividades(
-    actividad_id CHAR(2) PRIMARY KEY, 
-    bloque ENUM ('Bloque 1', 'Bloque 2', 'Bloque 3') NOT NULL,
-    disciplina ENUM
-('KICK BOXING', 'YOGA', 'PILATES', 'ZUMBA') NOT NULL,
-    horario VARCHAR
-(30) NOT NULL,
-    cupo INTEGER NOT NULL
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 INSERT INTO actividades
     (actividad_id, bloque, disciplina, horario, cupo)
 VALUES
@@ -40,3 +30,35 @@ VALUES
     ('3Y', 'Bloque 3', 'YOGA', '18:00 a 21:00', 20),
     ('3P', 'Bloque 3', 'PILATES', '18:00 a 21:00', 10),
     ('3Z', 'Bloque 3', 'ZUMBA', '18:00 a 21:00', 10);
+
+
+CREATE TABLE participantes
+(
+    email VARCHAR(50) PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50)
+        NOT NULL,
+    nacimiento DATE NOT NULL
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE registros
+(
+    registro_id INTEGER
+    UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+        email VARCHAR
+    (50) UNIQUE NOT NULL,
+        actividad CHAR
+    (2) NOT NULL,
+        fecha DATE NOT NULL,
+        FOREIGN KEY
+    (email) REFERENCES participantes
+    (email) ON
+    DELETE CASCADE ON
+    UPDATE CASCADE,
+        FOREIGN KEY (actividad) REFERENCES actividades(actividad_id)
+    ON
+    DELETE CASCADE ON
+    UPDATE CASCADE
+    )ENGINE=InnoDB
+    DEFAULT CHARSET=utf8mb4;
