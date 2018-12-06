@@ -81,12 +81,25 @@ CREATE TABLE registros
 )
 
     BEGIN
+        DECLARE existe_registro INT DEFAULT 0;
         DECLARE limite INT DEFAULT 0;
-        DECLARE registrados INT DEFAULT 0;
+    DECLARE registrados INT DEFAULT 0;
+    DECLARE respuesta VARCHAR
+    (50) DEFAULT "OK";
     DECLARE actividad_llena VARCHAR
     (255) DEFAULT "el bloque de actividad seleccionado esta completo";
 
     START TRANSACTION;
+
+    SELECT COUNT(*)
+    INTO existe_registro
+    FROM registros
+    WHERE email = _email;
+
+    IF existe_registro = 1 THEN
+    SELECT "tu corro electronico ya ha sido registrado previamente, solo puedes registrarte en una actividad" as respuesta;
+    ELSE
+
     SELECT cupo
     INTO limite
     FROM actividades
@@ -107,9 +120,13 @@ CREATE TABLE registros
         (email, actividad, fecha)
     VALUES
         (_email, _actividad, NOW());
+    SELECT respuesta;
     ELSE
-    SELECT actividad_llena;
+    SELECT "la actividad seleccionada ya se encuentra llena" as respuesta;
     END
+    IF;
+
+        END
     IF;
     COMMIT;
 
@@ -127,12 +144,15 @@ DELIMITER ;
 )
 
     BEGIN
+        DECLARE respuesta VARCHAR
+        (50) DEFAULT "ok";
     START TRANSACTION;
     DELETE FROM participantes
         WHERE email = _email;
 
     DELETE FROM registros
         WHERE email = _email;
+    SELECT respuesta;
     COMMIT;
     END $$
 
