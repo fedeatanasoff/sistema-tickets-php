@@ -95,7 +95,7 @@ CREATE TABLE registros
     SELECT COUNT(*)
     into registrados
     FROM registros
-    WHERE actividad_id = _actividad;
+    WHERE actividad = _actividad;
 
     IF registrados < limite THEN
     INSERT INTO participantes
@@ -110,9 +110,32 @@ CREATE TABLE registros
     ELSE
     SELECT actividad_llena;
     END
-    IF
+    IF;
     COMMIT;
 
     END $$
 
 DELIMITER ;
+
+    DROP PROCEDURE IF EXISTS eliminar_participante;
+
+    DELIMITER $$
+
+    CREATE PROCEDURE eliminar_participante(
+    IN _email VARCHAR
+    (50)
+)
+
+    BEGIN
+    START TRANSACTION;
+    DELETE FROM participantes
+        WHERE email = _email;
+
+    DELETE FROM registros
+        WHERE email = _email;
+    COMMIT;
+    END $$
+
+DELIMITER ;
+
+-- call registrar_participante("fede@fede.com", "Federico", "Atanasoff", "1991-01-01", "1K");
