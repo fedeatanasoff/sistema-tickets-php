@@ -62,3 +62,57 @@ CREATE TABLE registros
     UPDATE CASCADE
     )ENGINE=InnoDB
     DEFAULT CHARSET=utf8mb4;
+
+
+    DROP PROCEDURE IF EXISTS registrar_participante;
+
+    DELIMITER $$
+
+    CREATE PROCEDURE registrar_participante(
+    IN _email VARCHAR
+    (50),
+    IN _nombre VARCHAR
+    (50),
+    IN _apellido VARCHAR
+    (50),
+    IN _nacimiento DATE,
+    IN _actividad CHAR
+    (2)
+)
+
+    BEGIN
+        DECLARE limite INT DEFAULT 0;
+        DECLARE registrados INT DEFAULT 0;
+    DECLARE actividad_llena VARCHAR
+    (255) DEFAULT "el bloque de actividad seleccionado esta completo";
+
+    START TRANSACTION;
+    SELECT cupo
+    INTO limite
+    FROM actividades
+    WHERE actividad_id = _actividad;
+
+    SELECT COUNT(*)
+    into registrados
+    FROM registros
+    WHERE actividad_id = _actividad;
+
+    IF registrados < limite THEN
+    INSERT INTO participantes
+        (email, nombre, apellido, nacimiento)
+    VALUES
+        (_email, _nombre, _apellido, _nacimiento);
+
+    INSERT INTO registros
+        (email, actividad, fecha)
+    VALUES
+        (_email, _actividad, NOW());
+    ELSE
+    SELECT actividad_llena;
+    END
+    IF
+    COMMIT;
+
+    END $$
+
+DELIMITER ;
