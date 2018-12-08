@@ -41,5 +41,4 @@ function db_query($sql, $data = array(), $is_search = false, $search_once = fals
 
 		return true;
 	}
-
 }
